@@ -1,0 +1,5 @@
+require("core.options")
+require("core.lsp")
+require("core.mason-path")
+require("core.keymaps")
+require("core.autocmds")
