@@ -134,5 +134,27 @@ if [[ -d "$ZSH_SITE_FUNCTIONS" && ! "$fpath" =~ "$ZSH_SITE_FUNCTIONS" ]]; then
   fpath=($ZSH_SITE_FUNCTIONS $fpath)
 fi
 
+echo "[+] Installing JetBrains Mono Nerd Font..."
+
+# 9. Install JetBrainsMonoNerdFont
+if [[ "$OS" == "Darwin" ]]; then
+  brew tap homebrew/cask-fonts
+  brew install --cask font-jetbrains-mono-nerd-font || echo "[+] Font already installed"
+
+else
+  FONTS_DIR="$HOME/.local/share/fonts"
+  mkdir -p "$FONTS_DIR"
+  FONT_ZIP="$FONTS_DIR/JetBrainsMonoNerdFont.zip"
+
+  if [[ ! -f "$FONTS_DIR/JetBrainsMonoNerdFont-Regular.ttf" ]]; then
+    curl -fLo "$FONT_ZIP" https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/JetBrainsMono.zip
+    unzip -o "$FONT_ZIP" -d "$FONTS_DIR"
+    fc-cache -fv
+    echo "[+] Font installed"
+  else
+    echo "[+] Font already exists"
+  fi
+fi
+
 echo ""
 echo "[+] Setup complete!"
