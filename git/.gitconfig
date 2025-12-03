@@ -1,0 +1,16 @@
+[core]
+  editor = nvim
+  excludesfile = ~/.gitignore_global
+[push]
+	autoSetupRemote = true
+[user]
+	name = {{GIT_NAME}}
+  email = {{GIT_EMAIL}}
+[pull]
+  rebase = false
+[alias]
+  s = status
+  l = log --oneline --graph --decorate
+  co = checkout
+  br = branch
+  cm = commit -m
