@@ -5,34 +5,39 @@ set -e
 echo "[+] Detecting OS..."
 OS="$(uname -s)"
 
-# Install dependencies
+# 1. Install package managers & dependencies
 if [[ "$OS" == "Darwin" ]]; then
   echo "[+] macOS detected"
 
-  if ! command -v brew >/dev/null; then
+  # Homebrew
+  if ! command -v brew >/dev/null 2>&1; then
     echo "[+] Installing Homebrew..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+    # Add Homebrew to PATH
+    if [ -f /opt/homebrew/bin/brew ]; then
+      echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "$HOME/.zprofile"
+      eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [ -f /usr/local/bin/brew ]; then
+      echo 'eval "$(/usr/local/bin/brew shellenv)"' >> "$HOME/.zprofile"
+      eval "$(/usr/local/bin/brew shellenv)"
+    fi
   fi
 
-  brew install stow
-  brew install git
-  brew install tmux
-  brew install neovim
-  brew install yazi
+  brew install stow git tmux neovim yazi zsh
   brew install alacritty || echo "[+] alacritty already installed"
-  brew install zsh
 
 else
   echo "[+] Linux detected"
 
-  if command -v apt >/dev/null; then
+  if command -v apt >/dev/null 2>&1; then
     sudo apt update
     sudo apt install -y stow git tmux neovim zsh alacritty
 
-  elif command -v dnf >/dev/null; then
+  elif command -v dnf >/dev/null 2>&1; then
     sudo dnf install -y stow git tmux neovim zsh alacritty
 
-  elif command -v pacman >/dev/null; then
+  elif command -v pacman >/dev/null 2>&1; then
     sudo pacman -Syu --noconfirm stow git tmux neovim zsh alacritty
 
   else
@@ -41,7 +46,35 @@ else
   fi
 fi
 
-# Git configuration
+# 2. Install oh-my-zsh
+if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+  echo "[+] Installing oh-my-zsh..."
+  KEEP_ZSHRC=yes RUNZSH=no CHSH=no \
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+fi
+
+# 3. Install zsh plugins
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+
+# Vi mode
+if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-vi-mode" ]]; then
+  echo "[+] Installing zsh-vi-mode..."
+  git clone https://github.com/jeffreytse/zsh-vi-mode "$ZSH_CUSTOM/plugins/zsh-vi-mode"
+fi
+
+# Autosuggestions
+if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]]; then
+  echo "[+] Installing zsh-autosuggestions..."
+  git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+fi
+
+# Syntax highlighting
+if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]]; then
+  echo "[+] Installing zsh-syntax-highlighting..."
+  git clone https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+fi
+
+# 4. Git configuration
 echo ""
 echo "[+] Git configuration"
 
@@ -60,7 +93,7 @@ else
   exit 1
 fi
 
-# Symlinks via stow
+# 5. Create symlinks
 echo ""
 echo "[+] Creating symlinks..."
 
@@ -70,6 +103,12 @@ stow -vt "$HOME" nvim
 stow -vt "$HOME" tmux
 stow -vt "$HOME" alacritty
 stow -vt "$HOME" yazi
+
+# 6. Change default shell to zsh
+if [[ "$SHELL" != "$(command -v zsh)" ]]; then
+  echo "[+] Changing default shell to zsh..."
+  chsh -s "$(command -v zsh)" || echo "[!] Could not set zsh as default shell"
+fi
 
 echo ""
 echo "[+] Setup complete!"
