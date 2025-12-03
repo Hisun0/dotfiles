@@ -107,10 +107,10 @@ mkdir -p "$HOME/.config"
 
 stow -vt "$HOME" git
 stow -vt "$HOME" zsh
-stow -vt "$HOME/.config" nvim
+stow -vt "$HOME/.config/nvim" nvim
 stow -vt "$HOME" tmux
-stow -vt "$HOME/.config" alacritty
-stow -vt "$HOME/.config" yazi
+stow -vt "$HOME/.config/alacritty" alacritty
+stow -vt "$HOME/.config/yazi" yazi
 
 # 7. Fix default shell for macOS
 if [[ "$OS" == "Darwin" ]]; then
