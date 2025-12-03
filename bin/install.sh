@@ -103,11 +103,13 @@ fi
 echo ""
 echo "[+] Creating symlinks..."
 
+mkdir -p "$HOME/.config"
+
 stow -vt "$HOME" git
 stow -vt "$HOME" zsh
 stow -vt "$HOME" nvim
 stow -vt "$HOME" tmux
-stow -vt "$HOME" alacritty
+stow -vt "$HOME/.config" alacritty
 stow -vt "$HOME" yazi
 
 # 7. Fix default shell for macOS
