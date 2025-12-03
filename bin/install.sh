@@ -74,6 +74,12 @@ if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]]; then
   git clone https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
 fi
 
+# powerlevel10k theme
+if [[ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]]; then
+  echo "[+] Installing powerlevel10k..."
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$ZSH_CUSTOM/themes/powerlevel10k"
+fi
+
 # 4. Git configuration
 echo ""
 echo "[+] Git configuration"
@@ -104,10 +110,26 @@ stow -vt "$HOME" tmux
 stow -vt "$HOME" alacritty
 stow -vt "$HOME" yazi
 
-# 6. Change default shell to zsh
-if [[ "$SHELL" != "$(command -v zsh)" ]]; then
+# 7. Fix default shell for macOS
+if [[ "$OS" == "Darwin" ]]; then
+  ZSH_PATH="$(which zsh)"
+  if ! grep -Fxq "$ZSH_PATH" /etc/shells 2>/dev/null; then
+    echo "[+] Adding $ZSH_PATH to /etc/shells..."
+    echo "$ZSH_PATH" | sudo tee -a /etc/shells
+  fi
+fi
+
+# Change default shell
+if [[ "$SHELL" != "$(which zsh)" ]]; then
   echo "[+] Changing default shell to zsh..."
-  chsh -s "$(command -v zsh)" || echo "[!] Could not set zsh as default shell"
+  chsh -s "$(which zsh)" || echo "[!] Could not set zsh as default shell"
+fi
+
+# 8. Optional: fix missing completions
+ZSH_SITE_FUNCTIONS="$(brew --prefix)/share/zsh/site-functions"
+if [[ -d "$ZSH_SITE_FUNCTIONS" && ! "$fpath" =~ "$ZSH_SITE_FUNCTIONS" ]]; then
+  echo "[+] Adding site-functions to fpath..."
+  fpath=($ZSH_SITE_FUNCTIONS $fpath)
 fi
 
 echo ""
