@@ -8,10 +8,10 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 
 --- Check changes in buffer
-vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter" }, {
-  pattern = "*",
-  command = "checktime"
-})
+-- vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter" }, {
+--   pattern = "*",
+--   command = "checktime"
+-- })
 
 -- Delete highlight after search and replace
 vim.api.nvim_create_autocmd("CmdlineLeave", {

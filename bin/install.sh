@@ -25,20 +25,20 @@ if [[ "$OS" == "Darwin" ]]; then
   fi
 
   brew install stow git tmux neovim yazi zsh
-  brew install alacritty || echo "[+] alacritty already installed"
+  brew install --cask kitty || echo "[+] kitty already installed"
 
 else
   echo "[+] Linux detected"
 
   if command -v apt >/dev/null 2>&1; then
     sudo apt update
-    sudo apt install -y stow git tmux neovim zsh alacritty
+    sudo apt install -y stow git tmux neovim zsh kitty
 
   elif command -v dnf >/dev/null 2>&1; then
-    sudo dnf install -y stow git tmux neovim zsh alacritty
+    sudo dnf install -y stow git tmux neovim zsh kitty
 
   elif command -v pacman >/dev/null 2>&1; then
-    sudo pacman -Syu --noconfirm stow git tmux neovim zsh alacritty
+    sudo pacman -Syu --noconfirm stow git tmux neovim zsh kitty
 
   else
     echo "[!] Unsupported package manager"
@@ -109,7 +109,7 @@ stow -vt "$HOME" git
 stow -vt "$HOME" zsh
 stow -vt "$HOME/.config/nvim" nvim
 stow -vt "$HOME" tmux
-stow -vt "$HOME/.config/alacritty" alacritty
+stow -vt "$HOME/.config/kitty" kitty
 stow -vt "$HOME/.config/yazi" yazi
 
 # 7. Fix default shell for macOS

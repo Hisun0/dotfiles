@@ -14,7 +14,7 @@ Setup is automated with a single install script.
   - `zsh-syntax-highlighting`
 - **Tmux** configuration
 - **Neovim** configuration
-- **Alacritty** configuration
+- **Kitty** configuration (actually no config, just UI)
 - **Yazi** configuration
 - **Powerlevel10k** theme
 - **Git** configuration template

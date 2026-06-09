@@ -26,5 +26,13 @@ return {
         useSyntaxServer = false,
       },
     },
+    javascript = {
+      inlayHints = {
+        includeInlayParameterNameHints = "none",
+      },
+      suggestions = {
+        disableSuggestions = true,
+      },
+    },
   },
 }
