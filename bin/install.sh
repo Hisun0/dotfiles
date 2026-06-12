@@ -32,13 +32,15 @@ else
 
   if command -v apt >/dev/null 2>&1; then
     sudo apt update
-    sudo apt install -y stow git tmux neovim zsh kitty
+    sudo apt install -y stow git tmux neovim zsh kitty yazi
 
   elif command -v dnf >/dev/null 2>&1; then
     sudo dnf install -y stow git tmux neovim zsh kitty
+    sudo dnf copr enable atim/yazi -y
+    sudo dnf install -y yazi
 
   elif command -v pacman >/dev/null 2>&1; then
-    sudo pacman -Syu --noconfirm stow git tmux neovim zsh kitty
+    sudo pacman -Syu --noconfirm stow git tmux neovim zsh kitty yazi
 
   else
     echo "[!] Unsupported package manager"
@@ -89,8 +91,8 @@ read -p "Enter Git author email: " GIT_EMAIL
 
 if [[ -f git/.gitconfig.template ]]; then
   sed \
-    -e "s/{{GIT_NAME}}/$GIT_NAME/g" \
-    -e "s/{{GIT_EMAIL}}/$GIT_EMAIL/g" \
+    -e "s|{{GIT_NAME}}|$GIT_NAME|g" \
+    -e "s|{{GIT_EMAIL}}|$GIT_EMAIL|g" \
     git/.gitconfig.template > git/.gitconfig
 
   echo "[+] git/.gitconfig generated"
@@ -103,7 +105,9 @@ fi
 echo ""
 echo "[+] Creating symlinks..."
 
-mkdir -p "$HOME/.config"
+mkdir -p "$HOME/.config/nvim"
+mkdir -p "$HOME/.config/kitty"
+mkdir -p "$HOME/.config/yazi"
 
 stow -vt "$HOME" git
 stow -vt "$HOME" zsh
@@ -127,28 +131,28 @@ if [[ "$SHELL" != "$(which zsh)" ]]; then
   chsh -s "$(which zsh)" || echo "[!] Could not set zsh as default shell"
 fi
 
-# 8. Optional: fix missing completions
-ZSH_SITE_FUNCTIONS="$(brew --prefix)/share/zsh/site-functions"
-if [[ -d "$ZSH_SITE_FUNCTIONS" && ! "$fpath" =~ "$ZSH_SITE_FUNCTIONS" ]]; then
-  echo "[+] Adding site-functions to fpath..."
-  fpath=($ZSH_SITE_FUNCTIONS $fpath)
-fi
-
 echo "[+] Installing JetBrains Mono Nerd Font..."
 
-# 9. Install JetBrainsMonoNerdFont
+# 8. Install JetBrainsMonoNerdFont
 if [[ "$OS" == "Darwin" ]]; then
-  brew tap homebrew/cask-fonts
+  # Fix missing completions (Homebrew only)
+  ZSH_SITE_FUNCTIONS="$(brew --prefix)/share/zsh/site-functions"
+  if [[ -d "$ZSH_SITE_FUNCTIONS" && ! "$fpath" =~ "$ZSH_SITE_FUNCTIONS" ]]; then
+    echo "[+] Adding site-functions to fpath..."
+    fpath=($ZSH_SITE_FUNCTIONS $fpath)
+  fi
+
   brew install --cask font-jetbrains-mono-nerd-font || echo "[+] Font already installed"
 
 else
   FONTS_DIR="$HOME/.local/share/fonts"
   mkdir -p "$FONTS_DIR"
-  FONT_ZIP="$FONTS_DIR/JetBrainsMonoNerdFont.zip"
 
   if [[ ! -f "$FONTS_DIR/JetBrainsMonoNerdFont-Regular.ttf" ]]; then
-    curl -fLo "$FONT_ZIP" https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/JetBrainsMono.zip
+    FONT_ZIP="$FONTS_DIR/JetBrainsMonoNerdFont.zip"
+    curl -fLo "$FONT_ZIP" https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsMono.zip
     unzip -o "$FONT_ZIP" -d "$FONTS_DIR"
+    rm -f "$FONT_ZIP"
     fc-cache -fv
     echo "[+] Font installed"
   else
