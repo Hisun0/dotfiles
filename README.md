@@ -1,6 +1,6 @@
-# Dotfiles (work in progress, some features can not work)
+# Dotfiles
 
-Personal configuration files for macOS and Linux, including zsh, tmux, Neovim, Alacritty, and more.
+Personal configuration files for macOS and Linux, including zsh, tmux, Neovim, Kitty, and Yazi.
 Setup is automated with a single install script.
 
 ---
@@ -13,9 +13,9 @@ Setup is automated with a single install script.
   - `zsh-autosuggestions`
   - `zsh-syntax-highlighting`
 - **Tmux** configuration
-- **Neovim** configuration
-- **Kitty** configuration (actually no config, just UI)
-- **Yazi** configuration
+- **Neovim** configuration (native tree-sitter, no nvim-treesitter plugin)
+- **Kitty** terminal configuration
+- **Yazi** file manager configuration
 - **Powerlevel10k** theme
 - **Git** configuration template
 
@@ -31,12 +31,53 @@ Setup is automated with a single install script.
 
 ## Installation
 
-Run the setup script to automatically install dependencies, create symlinks, configure Git, and install fonts:
-
-If you have error when trying to execute `install.sh` script, you need to do `chmod +x bin/install.sh`
-
 ```bash
 git clone git@github.com:Hisun0/dotfiles.git
 cd ~/dotfiles
 ./bin/install.sh
 ```
+
+If you get a permission error: `chmod +x bin/install.sh`
+
+---
+
+## Neovim — Tree-sitter parsers
+
+Neovim is configured with native tree-sitter (`vim.treesitter.start`) instead of the `nvim-treesitter` plugin.
+Parsers must be compiled manually and placed in `~/.local/share/nvim/parser/`.
+
+**One-time setup:**
+
+```bash
+# Install tree-sitter CLI
+npm install -g tree-sitter-cli   # or: cargo install tree-sitter-cli
+
+mkdir -p ~/.local/share/nvim/parser
+```
+
+**Installing a parser (two commands per language):**
+
+```bash
+git clone https://github.com/tree-sitter/tree-sitter-<lang>
+cd tree-sitter-<lang> && tree-sitter build --output ~/.local/share/nvim/parser/<lang>.so
+```
+
+**Parsers used in this config:**
+
+| Language   | Repo                                                 |
+|------------|------------------------------------------------------|
+| JavaScript | tree-sitter/tree-sitter-javascript                   |
+| TypeScript | tree-sitter/tree-sitter-typescript (subdir: `typescript/`) |
+| TSX        | tree-sitter/tree-sitter-typescript (subdir: `tsx/`)  |
+| Lua        | tree-sitter/tree-sitter-lua                          |
+| CSS        | tree-sitter/tree-sitter-css                          |
+| SQL        | DerekStride/tree-sitter-sql                          |
+| JSON       | tree-sitter/tree-sitter-json                         |
+| Bash       | tree-sitter/tree-sitter-bash                         |
+
+> TypeScript and TSX share one repo — build from each subdirectory:
+> ```bash
+> git clone https://github.com/tree-sitter/tree-sitter-typescript
+> cd tree-sitter-typescript/typescript && tree-sitter build --output ~/.local/share/nvim/parser/typescript.so
+> cd ../tsx && tree-sitter build --output ~/.local/share/nvim/parser/tsx.so
+> ```
