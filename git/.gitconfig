@@ -1,0 +1,16 @@
+[core]
+  editor = nvim
+  excludesfile = ~/.gitignore_global
+[push]
+	autoSetupRemote = true
+[user]
+	name = Hisun0
+  email = tridvad1@gmail.com
+[pull]
+  rebase = false
+[alias]
+  s = status
+  l = log --oneline --graph --decorate
+  co = checkout
+  br = branch
+  cm = commit -m

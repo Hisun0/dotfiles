@@ -36,7 +36,7 @@ else
 
   elif command -v dnf >/dev/null 2>&1; then
     sudo dnf install -y stow git tmux neovim zsh kitty
-    sudo dnf copr enable atim/yazi -y
+    sudo dnf copr enable lihaohong/yazi
     sudo dnf install -y yazi
 
   elif command -v pacman >/dev/null 2>&1; then
