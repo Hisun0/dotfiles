@@ -135,13 +135,3 @@ source $ZSH/oh-my-zsh.sh
 # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 eval "$(fnm env --use-on-cd)"
 
-# bun completions
-[ -s "/Users/mac/.bun/_bun" ] && source "/Users/mac/.bun/_bun"
-
-alias psql="/opt/homebrew/opt/postgresql@16/bin/psql"
-
-source ~/.config/shell/postgres.sh
-
-. "$HOME/.local/bin/env"
-
-alias claude-mem='bun "/Users/mac/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
